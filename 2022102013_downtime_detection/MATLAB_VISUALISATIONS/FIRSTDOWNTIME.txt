@@ -1,0 +1,45 @@
+channelID = 2515894;
+% [data2, timestamp] = thingSpeakRead(channelID, 'Fields', 2, 'NumPoints', 40);
+
+% % Add time difference for GMT+530 (Indian Standard Time)
+% timeDifference = 5.5; % 5 hours and 30 minutes
+% timestamp = timestamp + timeDifference / 24; % Convert hour
+
+
+start_date = datetime(2024, 5, 2); % May 2nd, 2024
+
+data = thingSpeakRead(channelID, 'Fields', 1, 'DateRange', [start_date, datetime(2024, 5, 3)], 'OutputFormat', 'timetable');
+
+
+timestamps = data.Timestamps;
+data_values = data;
+
+
+timestamps_array = timestamps;
+
+
+data_values_array = table2array(data_values);
+
+
+first_below_3_idx = find(data_values_array > 3, 1);
+
+
+most_recent_idx = numel(data_values_array);
+
+
+plot(timestamps_array, data_values_array);
+hold on;
+
+
+plot(timestamps_array(first_below_3_idx), data_values_array(first_below_3_idx), 'ro', 'MarkerSize', 10, 'MarkerFaceColor', 'r');
+
+
+plot(timestamps_array(most_recent_idx), data_values_array(most_recent_idx), 'bo', 'MarkerSize', 10, 'MarkerFaceColor', 'b');
+
+xlabel('Timestamp');
+ylabel('Data Value (Field 1)');
+title('Thingspeak Data Visualization (Field 1)');
+
+legend('Data', 'First value after deployement');
+
+disp(['Timestamp of first data point deployed: ', char(timestamps(first_below_3_idx))]);

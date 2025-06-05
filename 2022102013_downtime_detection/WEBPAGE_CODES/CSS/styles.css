@@ -1,0 +1,48 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+
+#content {
+    max-width: 800px; 
+    margin: 50px auto;
+    text-align: center;
+}
+
+
+#data {
+    font-size: 24px; 
+    margin-bottom: 10px; 
+}
+
+
+#status {
+    font-size: 20px; 
+    color: green; /
+}
+
+
+.graph-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+
+.graph {
+    display: inline-block;
+    margin-right: 10px;
+}
+.graph iframe {
+    display: inline-block;
+    width: 400px;
+    height: 300px;
+}

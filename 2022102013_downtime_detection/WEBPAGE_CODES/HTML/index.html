@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Current Monitoring: Zainab Raza</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        #content {
+            max-width: 600px;
+            margin: 50px auto;
+            text-align: center;
+        }
+
+        #data {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        #status {
+            font-size: 18px;
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <div id="content">
+        <h1>Current Monitoring: Zainab Raza</h1>
+
+        <div class="graph-container">
+            <div class="graph">
+                <iframe src="https://thingspeak.com/apps/matlab_visualizations/565875" width="400" height="300" frameborder="0"></iframe>
+            </div>
+            <div class="graph">
+                <iframe src="https://thingspeak.com/apps/matlab_visualizations/565876" width="400" height="300" frameborder="0"></iframe>
+            </div>
+        </div>
+        <p id="status"></p>
+        <div id="data"></div> 
+        <div id="fieldData"></div> 
+    </div>
+
+    <script>
+        const channelId = '2515894';
+        const apiKey = 'QGW11KUKJMCIALDW';
+        const threshold = 0.5; 
+
+        const dataElement = document.getElementById('data');
+        const statusElement = document.getElementById('status');
+
+        function fetchData() {
+            fetch(`https://api.thingspeak.com/channels/${channelId}/fields/2/last.json?api_key=${apiKey}`)
+                .then(response => response.json())
+                .then(data => {
+                    const value = parseFloat(data.field2);
+                    dataElement.textContent = `Input RMS Current: ${value}A`;
+                    
+                    if (value < threshold) {
+                        statusElement.textContent = 'Downtime Detected';
+                        statusElement.style.color = 'red';
+                    } else {
+                        statusElement.textContent = 'No Downtime';
+                        statusElement.style.color = 'green';
+                    }
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+        function fetchFieldData() {
+            const url = `https://api.thingspeak.com/channels/${channelId}/feeds.json?results=1`;
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.feeds && data.feeds.length > 0) {
+                        const fieldData = data.feeds[0];
+                        const field1 = fieldData.field1;
+                        const field2 = fieldData.field2;
+
+                        
+                        document.getElementById('fieldData').innerHTML = `
+                            <p>Output RMS Current: ${field1}A</p>
+                            <p>Input RMS Current: ${field2}A</p>
+                        `;
+                    }
+                })
+                .catch(error => console.error('Error fetching field data:', error));
+        }
+
+        
+        fetchData();
+        fetchFieldData();
+
+        
+        setInterval(fetchData, 3500);
+        setInterval(fetchFieldData, 3500);
+    </script>
+</body>
+</html>

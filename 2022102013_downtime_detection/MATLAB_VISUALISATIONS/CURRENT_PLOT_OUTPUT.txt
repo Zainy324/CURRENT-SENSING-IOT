@@ -1,0 +1,15 @@
+% Enter your MATLAB code below
+
+channelID = 2515894;
+[data1, timestamp] = thingSpeakRead(channelID, 'Fields', 1, 'NumPoints', 40);
+
+% Add time difference for GMT+530 (Indian Standard Time)
+timeDifference = 5.5; % 5 hours and 30 minutes
+timestamp = timestamp + timeDifference / 24; % Convert hours to fraction of a day
+
+figure();
+plot(timestamp, data1, '-o');
+xlabel('Time (GMT+530)');
+ylabel('Data');
+ylim([0 7]);
+title('RMS Current at Output');
